@@ -1,29 +1,86 @@
-// let input = document.querySelector(".input");
-// const clearBtn = document.querySelector(".clear");
-// const btn1 = document.querySelector("#btn1");
-// const btn2 = document.querySelector("#btn2");
-// const btn3 = document.querySelector("#btn3");
-// const btn4 = document.querySelector("#btn4");
+let firstOperand = '';
+let currentOperator = null;
+let secondOperand = '';
+let shouldResetScreen = false;
 
-// const buttons = document.querySelectorAll(".buttons");
-// let initialValue = 0;
+const numberButtons = document.querySelectorAll('#number');
+const operatorButtons = document.querySelectorAll('#operator');
+const equalsBtn = document.querySelector('#equalsBtn');
+const clearBtn = document.querySelector('#clearBtn');
+const deleteBtn = document.querySelector('#deleteBtn')
+const pointBtn = document.querySelector('#pointBtn')
+const previousOperationScreen = document.querySelector('#previousOperation');
+const currentOperationScreen = document.querySelector('#currentOperation');
 
-// one.addEventListener("click", () => input.textContent = 1)
+// equalsBtn.addEventListener('click', evaluate);
+clearBtn.addEventListener('click', clear);
+deleteBtn.addEventListener('click', deleteNumber);
+pointBtn.addEventListener('click', appendPoint);
 
-// clearBtn.addEventListener("click", () => input.textContent = initialValue)
+numberButtons.forEach(button => {
+    button.addEventListener('click', () => appendNumber(button.textContent))
+})
 
-function add (prev, current) {
-    return prev + current;
+operatorButtons.forEach(button => {
+    button.addEventListener('click', () => setOperator(button.textContent))
+})
+
+function appendNumber(number) {
+    if (currentOperationScreen.textContent === '0' || shouldResetScreen) {
+        resetScreen();
+    }
+    currentOperationScreen.textContent += number;
 }
 
-function subtract (prev, current) {
-    return prev - current;
+function resetScreen() {
+    currentOperationScreen.textContent = '';
+    shouldResetScreen = false;
 }
 
-function multiply(prev, current) {
-    return prev * current;
+function clear() {
+    currentOperationScreen.textContent = '0';
+    previousOperationScreen.textContent = '';
+    firstOperand = '';
+    currentOperator = null;
+    secondOperand = '';
 }
 
-function divide(prev, current) {
-    return prev / current;
+function appendPoint() {
+    if (shouldResetScreen) resetScreen();
+    if (currentOperationScreen === '') currentOperationScreen.textContent = '0';
+    if (currentOperationScreen.textContent.includes('.')) return;
+    currentOperationScreen.textContent += '.';
 }
+
+function deleteNumber() {
+    currentOperationScreen.textContent = currentOperationScreen.textContent.toString().slice(0, -1);
+}
+
+function setOperator(operator) {
+    if (!currentOperationScreen.textContent.includes(operator)) 
+        currentOperationScreen.textContent += operator;
+}
+
+// function operate(firstOperand, currentOperator, secondOperand) {
+//     const a = parseFloat(firstOperand);
+//     const b = parseFloat(secondOperand);
+//     let result;
+
+//     switch (currentOperator) {
+//         case '+':
+//             result = a + b;
+//             break;
+//         case '-':
+//             result = a - b;
+//             break;
+//         case '×':
+//             result = a * b;
+//             break;
+//         case '÷':
+//             result = b === 0 ? 'Error' : a / b;
+//             break;
+//         default:
+//             result = 0;
+//     }
+//     return result;
+// }
