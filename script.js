@@ -1,5 +1,5 @@
 let firstOperand = '';
-let currentOperator = null;
+let currentOperation = null;
 let secondOperand = '';
 let shouldResetScreen = false;
 
@@ -12,7 +12,7 @@ const pointBtn = document.querySelector('#pointBtn')
 const previousOperationScreen = document.querySelector('#previousOperation');
 const currentOperationScreen = document.querySelector('#currentOperation');
 
-// equalsBtn.addEventListener('click', evaluate);
+equalsBtn.addEventListener('click', evaluate);
 clearBtn.addEventListener('click', clear);
 deleteBtn.addEventListener('click', deleteNumber);
 pointBtn.addEventListener('click', appendPoint);
@@ -27,7 +27,7 @@ operatorButtons.forEach(button => {
 
 function appendNumber(number) {
     if (currentOperationScreen.textContent === '0' || shouldResetScreen) {
-        resetScreen();
+        resetScreen()
     }
     currentOperationScreen.textContent += number;
 }
@@ -41,13 +41,13 @@ function clear() {
     currentOperationScreen.textContent = '0';
     previousOperationScreen.textContent = '';
     firstOperand = '';
-    currentOperator = null;
+    currentOperation = null;
     secondOperand = '';
 }
 
 function appendPoint() {
     if (shouldResetScreen) resetScreen();
-    if (currentOperationScreen === '') currentOperationScreen.textContent = '0';
+    if (currentOperationScreen.textContent === '') currentOperationScreen.textContent = '0';
     if (currentOperationScreen.textContent.includes('.')) return;
     currentOperationScreen.textContent += '.';
 }
@@ -57,30 +57,50 @@ function deleteNumber() {
 }
 
 function setOperator(operator) {
-    if (!currentOperationScreen.textContent.includes(operator)) 
-        currentOperationScreen.textContent += operator;
+    if (currentOperation !== null) evaluate();
+    firstOperand = currentOperationScreen.textContent;
+    currentOperation = operator;
+    previousOperationScreen.textContent = `${firstOperand} ${currentOperation}`;
+    shouldResetScreen = true;
 }
 
-// function operate(firstOperand, currentOperator, secondOperand) {
-//     const a = parseFloat(firstOperand);
-//     const b = parseFloat(secondOperand);
-//     let result;
+function evaluate() {
+    if (currentOperation === null || shouldResetScreen) return;
+    if (currentOperationScreen.textContent === '0' && currentOperation === '÷') {
+        alert("Can't divide by 0");
+        return;
+    }
+    secondOperand = currentOperationScreen.textContent;
+    currentOperationScreen.textContent = roundResult(operate(firstOperand, currentOperation, secondOperand))
+    previousOperationScreen.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+    currentOperation = null;
 
-//     switch (currentOperator) {
-//         case '+':
-//             result = a + b;
-//             break;
-//         case '-':
-//             result = a - b;
-//             break;
-//         case '×':
-//             result = a * b;
-//             break;
-//         case '÷':
-//             result = b === 0 ? 'Error' : a / b;
-//             break;
-//         default:
-//             result = 0;
-//     }
-//     return result;
-// }
+}
+
+function roundResult(number) {
+    return Math.round(number * 1000) / 1000;
+}
+
+function operate(firstOperand, currentOperation, secondOperand) {
+    const a = parseFloat(firstOperand);
+    const b = parseFloat(secondOperand);
+    let result;
+
+    switch (currentOperation) {
+        case '+':
+            result = a + b;
+            break;
+        case '-':
+            result = a - b;
+            break;
+        case '×':
+            result = a * b;
+            break;
+        case '÷':
+            result = b === 0 ? 'Error' : a / b;
+            break;
+        default:
+            result = 0;
+    }
+    return result;
+}
